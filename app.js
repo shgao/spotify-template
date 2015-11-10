@@ -1,28 +1,31 @@
+
 var data;
-var baseUrl = 'https://api.spotify.com/v1/search?type=track&query='
-var myApp = angular.module('myApp', [])
+var baseUrl = 'https://api.spotify.com/v1/artists/';
+var myApp = angular.module('myApp', []);
 
 var myCtrl = myApp.controller('myCtrl', function($scope, $http) {
   $scope.audioObject = {}
   $scope.getSongs = function() {
-    $http.get(baseUrl + $scope.track).success(function(response){
+    $http.get('https://api.spotify.com/v1/search?type=track&query=' + $scope.track).success(function(response){
       data = $scope.tracks = response.tracks.items
-      
-    })
+    });
+
+    $('#search').css('background-color', 'white');
   }
-  $scope.play = function(song) {
-    if($scope.currentSong == song) {
-      $scope.audioObject.pause()
-      $scope.currentSong = false
-      return
-    }
-    else {
-      if($scope.audioObject.pause != undefined) $scope.audioObject.pause()
-      $scope.audioObject = new Audio(song);
-      $scope.audioObject.play()  
-      $scope.currentSong = song
-    }
+
+  $scope.select = function(song) {
+    $http.get(baseUrl + song + '/related-artists').success(function(response) {
+      data = $scope.relateds = response.artists
+    });
   }
+
+  $scope.hoverIn = function(){
+    this.hoverEdit = true;
+  };
+
+  $scope.hoverOut = function(){
+    this.hoverEdit = false;
+  };
 })
 
 // Add tool tips to anything with a title property
